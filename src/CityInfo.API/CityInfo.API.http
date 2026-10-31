@@ -11,7 +11,13 @@
 ### Cities Endpoints
 ###
 
+
+### Get all cities
 GET {{baseUrl}}/api/cities
+Accept: application/json
+
+### Get specific city
+GET {{baseUrl}}/api/cities/{{cityId}}
 Accept: application/json
 
 ###
