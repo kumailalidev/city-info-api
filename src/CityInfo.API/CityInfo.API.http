@@ -16,6 +16,10 @@
 GET {{baseUrl}}/api/cities
 Accept: application/json
 
+### Get all cities (XML format)
+GET {{baseUrl}}/api/cities
+Accept: application/xml
+
 ### Get specific city
 GET {{baseUrl}}/api/cities/{{cityId}}
 Accept: application/json
