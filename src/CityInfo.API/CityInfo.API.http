@@ -6,6 +6,14 @@
 @cityId = 1
 @pointOfInterestId = 1
 
+
+###
+### Cities Endpoints
+###
+
+GET {{baseUrl}}/api/cities
+Accept: application/json
+
 ###
 ### OpenAPI Documentation Endpoints
 ###
