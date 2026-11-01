@@ -44,7 +44,7 @@ public class PointsOfInterestController : ControllerBase
 
     [HttpPost]
     public ActionResult<PointOfInterestDto> CreatePointOfInterest(int cityId,
-        [FromBody] PointOfInterestForCreationDto pointOfInterest) // PointOfInterestForCreationDto is a complex type, [FromBody] attribute is not required
+        PointOfInterestForCreationDto pointOfInterest) // PointOfInterestForCreationDto is a complex type, [FromBody] attribute is not required
     {
         var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
         if (city == null)
