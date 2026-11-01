@@ -1,3 +1,4 @@
+using CityInfo.API;
 using CityInfo.API.Services;
 
 using Microsoft.AspNetCore.StaticFiles;
@@ -9,6 +10,7 @@ builder.Services.AddControllers()
     .AddXmlDataContractSerializerFormatters();
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
+builder.Services.AddSingleton<CitiesDataStore>();
 
 #if DEBUG
 builder.Services.AddTransient<IMailService, LocalMailService>();
