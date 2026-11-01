@@ -32,6 +32,18 @@ Accept: application/json
 GET {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
 Accept: application/json
 
+### Get specific point of interest for a that doesn't exists
+GET {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/999
+Accept: application/json
+
+### Create a new point of interest
+POST {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest
+Content-Type: application/json
+
+{
+    "name": "Sample point of interest name",
+    "description": "Sample point of interest description"
+}
 
 ###
 ### File Endpoints
