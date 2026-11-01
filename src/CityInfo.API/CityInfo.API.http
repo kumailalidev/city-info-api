@@ -45,6 +45,24 @@ Content-Type: application/json
     "description": "Sample point of interest description"
 }
 
+### Update point of interest (full update with PUT)
+PUT {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
+Content-Type: application/json
+
+{
+    "name": "Updated point of interest name",
+    "description": "Updated point of interest description"
+}
+
+### Update point of interest (no description) (full update with PUT)
+PUT {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
+Content-Type: application/json
+
+{
+    "name": "Updated point of interest name",
+    "description": "Updated point of interest description"
+}
+
 ### Delete point of interest
 DELETE {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
 

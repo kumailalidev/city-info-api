@@ -96,4 +96,31 @@ public class PointsOfInterestController : ControllerBase
 
         return NoContent();
     }
+
+    // Full update
+    [HttpPut("{pointOfInterestId}")]
+    public ActionResult UpdatePointOfInterest(int cityId,
+        int pointOfInterestId,
+        PointOfInterestForUpdateDto pointOfInterest)
+    {
+        var city = CitiesDataStore.Current
+            .Cities.FirstOrDefault(c => c.Id == cityId);
+        if (city == null)
+        {
+            return NotFound();
+        }
+
+        var pointOfInterestFromStore = city.PointsOfInterest
+            .FirstOrDefault(p => p.Id == pointOfInterestId);
+        if (pointOfInterestFromStore == null)
+        {
+            return NotFound();
+        }
+
+        // Fully update the resource; If consumer does not provide a value for a field, set as default value
+        pointOfInterestFromStore.Name = pointOfInterest.Name;
+        pointOfInterestFromStore.Description = pointOfInterest.Description;
+
+        return NoContent();
+    }
 }
