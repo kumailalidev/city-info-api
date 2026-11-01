@@ -28,4 +28,25 @@ public class FilesController(FileExtensionContentTypeProvider fileExtensionConte
         var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile);
         return File(bytes, contentType, Path.GetFileName(pathToFile));
     }
+
+    [HttpPost]
+    public async Task<ActionResult> CreateFile(IFormFile file) // `IFormFile` represents file sent with http req.
+    {
+        // Validate the input.
+        if (file.Length is 0
+            || file.Length > 20971520
+            || file.ContentType != "text/plain")
+        {
+            return BadRequest("No file or an invalid one has been inputted.");
+        }
+
+        // Create the file path.
+        var path = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            $"uploaded_file_{Guid.NewGuid()}.txt");
+
+        await using var stream = new FileStream(path, FileMode.Create);
+        await file.CopyToAsync(stream);
+        return Ok("Your file has been uploaded successfully");
+    }
 }

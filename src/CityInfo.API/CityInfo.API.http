@@ -56,6 +56,19 @@ DELETE {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
 GET {{baseUrl}}/api/files/sample-file-identifier
 Accept: text/plain
 
+
+### Upload PDF file
+POST {{baseUrl}}/api/files
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="SampleTextFile.txt"
+Content-Type: text/plain
+
+< ./SampleTextFile.txt
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
 ###
 ### OpenAPI Documentation Endpoints
 ###
