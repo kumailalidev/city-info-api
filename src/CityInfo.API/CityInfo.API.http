@@ -24,8 +24,16 @@ Accept: application/xml
 GET {{baseUrl}}/api/cities/{{cityId}}
 Accept: application/json
 
+### Invalid city id
+GET {{baseUrl}}/api/cities/999
+Accept: application/json
+
 ### Get all points of interest for a city
 GET {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest
+Accept: application/json
+
+### Get points of interest for a city that doesn't exists
+GET {{baseUrl}}/api/cities/999/pointsofinterest
 Accept: application/json
 
 ### Get specific point of interest for a city
