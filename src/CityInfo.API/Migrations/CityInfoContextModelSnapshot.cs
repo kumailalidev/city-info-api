@@ -34,6 +34,38 @@ namespace CityInfo.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "The largest city of Pakistan, famous for its beaches, historical buildings, vibrant food culture, and Quaid-e-Azam's Mausoleum.",
+                            Name = "Karachi"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "The cultural capital of Pakistan, famous for Badshahi Mosque, Lahore Fort, Shalimar Gardens, and its delicious traditional food.",
+                            Name = "Lahore"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "The capital city of Pakistan, known for its beautiful greenery, modern infrastructure, Faisal Mosque, and Margalla Hills.",
+                            Name = "Islamabad"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "One of the oldest cities in South Asia, famous for Qissa Khwani Bazaar, Peshawar Museum, traditional chapli kebabs, and rich Pashtun culture.",
+                            Name = "Peshawar"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "The capital of Balochistan, surrounded by mountains and known for its beautiful landscapes, fruit orchards, and traditional Balochi culture.",
+                            Name = "Quetta"
+                        });
                 });
 
             modelBuilder.Entity("CityInfo.API.Entities.PointOfInterest", b =>
@@ -59,6 +91,57 @@ namespace CityInfo.API.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("PointOfInterests");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CityId = 1,
+                            Description = "The mausoleum of Muhammad Ali Jinnah, the founder of Pakistan, and one of Karachi's most iconic landmarks.",
+                            Name = "Mazar-e-Quaid"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CityId = 1,
+                            Description = "A popular beach along the Arabian Sea, known for its scenic coastline, camel rides, and recreational activities.",
+                            Name = "Clifton Beach"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CityId = 1,
+                            Description = "A maritime museum showcasing Pakistan's naval history, ships, aircraft, and naval heritage.",
+                            Name = "Pakistan Maritime Museum"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CityId = 2,
+                            Description = "A magnificent Mughal-era mosque known for its grand architecture and historical significance.",
+                            Name = "Badshahi Mosque"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CityId = 3,
+                            Description = "One of Pakistan's largest mosques, famous for its unique modern architecture and scenic location.",
+                            Name = "Faisal Mosque"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CityId = 4,
+                            Description = "A museum showcasing Gandhara art, Buddhist sculptures, and the region's rich archaeological history.",
+                            Name = "Peshawar"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CityId = 5,
+                            Description = "A picturesque lake surrounded by mountains, popular for its beautiful scenery and recreational activities.",
+                            Name = "Hanna Lake"
+                        });
                 });
 
             modelBuilder.Entity("CityInfo.API.Entities.PointOfInterest", b =>
