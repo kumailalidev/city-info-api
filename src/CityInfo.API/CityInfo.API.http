@@ -45,6 +45,9 @@ Content-Type: application/json
     "description": "Sample point of interest description"
 }
 
+### Delete point of interest
+DELETE {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
+
 ###
 ### File Endpoints
 ###
