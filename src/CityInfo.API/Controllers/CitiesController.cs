@@ -10,8 +10,7 @@ namespace CityInfo.API.Controllers;
 [ApiController]
 [Route("api/cities")] // or "api/[controller]"
 public class CitiesController(ICityInfoRepository cityInfoRepository,
-    IMapper mapper,
-    CitiesDataStore citiesDataStore) : ControllerBase
+    IMapper mapper) : ControllerBase
 {
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities()
@@ -22,16 +21,21 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
     }
 
     [HttpGet("{id}")]
-    public ActionResult<CityDto> GetCity(int id)
+    public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false)
     {
-        var cityToReturn = citiesDataStore
-            .Cities.FirstOrDefault(c => c.Id == id);
+        var city = await cityInfoRepository
+            .GetCityAsync(id, includePointsOfInterest);
 
-        if (cityToReturn == null)
+        if (city == null)
         {
             return NotFound();
         }
 
-        return Ok(cityToReturn);
+        if (includePointsOfInterest)
+        {
+            return Ok(mapper.Map<CityDto>(city));
+        }
+
+        return Ok(mapper.Map<CityWithoutPointsOfInterestDto>(city));
     }
 }

@@ -19,6 +19,11 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .OrderBy(c => c.Name).ToListAsync();
     }
 
+    public async Task<bool> CityExistsAsync(int cityId)
+    {
+        return await context.Cities.AnyAsync(c => c.Id == cityId);
+    }
+
     public async Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest)
     {
         if (includePointsOfInterest)
@@ -39,7 +44,7 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<PointOfInterest>>? GetPointsOfInterestForCityAsync(int cityId)
+    public async Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId)
     {
         return await context.PointOfInterests
             .Where(p => p.CityId == cityId)

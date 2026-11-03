@@ -1,3 +1,5 @@
+using AutoMapper;
+
 using CityInfo.API.Models;
 using CityInfo.API.Services;
 
@@ -10,43 +12,45 @@ namespace CityInfo.API.Controllers;
 [ApiController]
 public class PointsOfInterestController(
     CitiesDataStore citiesDataStore,
+    ICityInfoRepository cityInfoRepository,
+    IMapper mapper,
     ILogger<PointsOfInterestController> logger,
     IMailService mailService) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
+    public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId)
     {
-        var city = citiesDataStore
-            .Cities.FirstOrDefault(c => c.Id == cityId);
-
-        if (city == null)
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
             logger.LogInformation(
             "City with id {cityId} wasn't found when accessing points of interest", cityId);
             return NotFound();
         }
 
-        return Ok(city.PointsOfInterest);
+        var pointsOfInterestForCity = await cityInfoRepository
+            .GetPointsOfInterestForCityAsync(cityId);
+
+        return Ok(mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
     }
 
     [HttpGet("{pointOfInterestId}", Name = "GetPointOfInterest")]
-    public ActionResult<IEnumerable<PointOfInterestDto>> GetPointOfInterest(int cityId, int pointOfInterestId)
+    public async Task<ActionResult<PointOfInterestDto>> GetPointOfInterest(int cityId, int pointOfInterestId)
     {
-        var city = citiesDataStore
-            .Cities.FirstOrDefault(c => c.Id == cityId);
-        if (city == null)
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
+            logger.LogInformation(
+            "City with id {cityId} wasn't found when accessing points of interest", cityId);
             return NotFound();
         }
 
-        var pointOfInterest = city.PointsOfInterest
-            .FirstOrDefault(p => p.Id == pointOfInterestId);
+        var pointOfInterest = await cityInfoRepository
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
         if (pointOfInterest == null)
         {
             return NotFound();
         }
 
-        return Ok(pointOfInterest);
+        return Ok(mapper.Map<PointOfInterestDto>(pointOfInterest));
     }
 
     [HttpPost]

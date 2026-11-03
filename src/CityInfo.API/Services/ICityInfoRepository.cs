@@ -7,8 +7,9 @@ public interface ICityInfoRepository
     // IQueryable<City> GetCities();
     Task<IEnumerable<City>> GetCitiesAsync();
     Task<IEnumerable<City>> GetCitiesReadOnlyAsync();
+    Task<bool> CityExistsAsync(int cityId);
     Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest);
-    Task<IEnumerable<PointOfInterest>>? GetPointsOfInterestForCityAsync(int cityId);
+    Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId);
     Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId,
         int pointOfInterestId);
 }

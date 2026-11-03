@@ -24,6 +24,11 @@ Accept: application/xml
 GET {{baseUrl}}/api/cities/{{cityId}}
 Accept: application/json
 
+### Get specific city with point of interest
+GET {{baseUrl}}/api/cities/{{cityId}}?includePointsOfInterest=true
+Accept: application/json
+
+
 ### Invalid city id
 GET {{baseUrl}}/api/cities/999
 Accept: application/json
