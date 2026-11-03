@@ -17,7 +17,8 @@ builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 builder.Services.AddSingleton<CitiesDataStore>();
 
 builder.Services.AddDbContext<CityInfoContext>(dbContextOptions =>
-    dbContextOptions.UseSqlite("Data Source=CityInfo.db"));
+    dbContextOptions.UseSqlite(builder.Configuration["ConnectionStrings:CityInfoDBConnectionString"]
+        ?? throw new InvalidOperationException()));
 
 #if DEBUG
 builder.Services.AddTransient<IMailService, LocalMailService>();
