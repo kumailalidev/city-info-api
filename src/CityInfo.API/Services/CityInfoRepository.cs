@@ -13,6 +13,12 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
         return await context.Cities.OrderBy(c => c.Name).ToListAsync();
     }
 
+    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync()
+    {
+        return await context.Cities.AsNoTracking()
+            .OrderBy(c => c.Name).ToListAsync();
+    }
+
     public async Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest)
     {
         if (includePointsOfInterest)
