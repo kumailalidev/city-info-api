@@ -20,6 +20,8 @@ builder.Services.AddDbContext<CityInfoContext>(dbContextOptions =>
     dbContextOptions.UseSqlite(builder.Configuration["ConnectionStrings:CityInfoDBConnectionString"]
         ?? throw new InvalidOperationException()));
 
+builder.Services.AddScoped<ICityInfoRepository, CityInfoRepository>();
+
 #if DEBUG
 builder.Services.AddTransient<IMailService, LocalMailService>();
 #else
