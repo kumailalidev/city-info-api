@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+
+using AutoMapper;
 
 using CityInfo.API.Models;
 using CityInfo.API.Services;
@@ -27,12 +29,18 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
             pageSize = _maxCitiesPageSize;
         }
 
-        var cityEntities = await cityInfoRepository.GetCitiesReadOnlyAsync(
+        var (cityEntities, paginationMetadata) = await cityInfoRepository.GetCitiesReadOnlyAsync(
             name,
             searchQuery,
             pageNumber,
             pageSize,
             cancellationToken); // Only read the data, do not track the changes (to object)
+
+        if (paginationMetadata != null)
+        {
+            Response.Headers.Append("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
+        }
 
         return Ok(mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
     }

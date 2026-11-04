@@ -1,5 +1,6 @@
 ﻿using CityInfo.API.DbContexts;
 using CityInfo.API.Entities;
+using CityInfo.API.Models;
 using CityInfo.API.Services;
 
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,15 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(
+    public async Task<(IEnumerable<City>, PaginationMetadata?)> GetCitiesReadOnlyAsync(
         string? name,
         string? searchQuery,
         int pageNumber,
-        int PageSize,
+        int pageSize,
         CancellationToken cancellationToken)
     {
-        // Casting IQueryable to City DbSet (for deferred execution; execution is deferred until the query is iterated over via ToList(), ToArray(), etc)
+        // Casting IQueryable to City DbSet (for deferred execution; execution is
+        // deferred until the query is iterated over via ToList(), ToArray(), etc)
         var collection = context.Cities as IQueryable<City>;
 
         if (!string.IsNullOrEmpty(name))
@@ -44,12 +46,17 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
                     || (c.Description != null && c.Description.Contains(searchQuery)));
         }
 
-        return await collection
+        var totalItemCount = await collection.CountAsync(cancellationToken);
+        var paginationMetadata = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
+
+        var collectionToReturn = await collection
             .AsNoTracking()
             .OrderBy(c => c.Name)
-            .Skip(PageSize * (pageNumber - 1))
-            .Take(PageSize)
+            .Skip(pageSize * (pageNumber - 1))
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        return (collectionToReturn, paginationMetadata);
     }
 
     public async Task<bool> CityExistsAsync(int cityId)

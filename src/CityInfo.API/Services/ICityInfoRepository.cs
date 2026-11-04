@@ -1,4 +1,5 @@
 ﻿using CityInfo.API.Entities;
+using CityInfo.API.Models;
 
 namespace CityInfo.API.Services;
 
@@ -7,7 +8,7 @@ public interface ICityInfoRepository
     // IQueryable<City> GetCities();
     Task<IEnumerable<City>> GetCitiesAsync();
     Task<IEnumerable<City>> GetCitiesReadOnlyAsync(CancellationToken cancellationToken);
-    Task<IEnumerable<City>> GetCitiesReadOnlyAsync(
+    Task<(IEnumerable<City>, PaginationMetadata?)> GetCitiesReadOnlyAsync(
         string? name,
         string? searchQuery,
         int pageNumber,
