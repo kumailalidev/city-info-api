@@ -6,7 +6,7 @@ public interface ICityInfoRepository
 {
     // IQueryable<City> GetCities();
     Task<IEnumerable<City>> GetCitiesAsync();
-    Task<IEnumerable<City>> GetCitiesReadOnlyAsync();
+    Task<IEnumerable<City>> GetCitiesReadOnlyAsync(CancellationToken cancellationToken);
     Task<bool> CityExistsAsync(int cityId);
     Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest);
     Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId);

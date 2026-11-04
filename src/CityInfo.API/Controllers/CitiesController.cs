@@ -13,9 +13,10 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
     IMapper mapper) : ControllerBase
 {
     [HttpGet()]
-    public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities()
+    public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities(
+        CancellationToken cancellationToken = default)
     {
-        var cityEntities = await cityInfoRepository.GetCitiesReadOnlyAsync(); // Only read the data, do not track the changes (to object)
+        var cityEntities = await cityInfoRepository.GetCitiesReadOnlyAsync(cancellationToken); // Only read the data, do not track the changes (to object)
 
         return Ok(mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
     }

@@ -13,10 +13,10 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
         return await context.Cities.OrderBy(c => c.Name).ToListAsync();
     }
 
-    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync()
+    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(CancellationToken cancellationToken)
     {
         return await context.Cities.AsNoTracking()
-            .OrderBy(c => c.Name).ToListAsync();
+            .OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
     public async Task<bool> CityExistsAsync(int cityId)
