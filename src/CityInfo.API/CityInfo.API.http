@@ -20,8 +20,12 @@ Accept: application/json
 GET {{baseUrl}}/api/cities
 Accept: application/xml
 
-### Get all cities (filtered)
+### Get all cities, filtered
 GET {{baseUrl}}/api/cities?name=Karachi
+Accept: application/json
+
+### Get all cities, searched
+GET {{baseUrl}}/api/cities?searchQuery=capital&name=Lahore
 Accept: application/json
 
 ### Get specific city

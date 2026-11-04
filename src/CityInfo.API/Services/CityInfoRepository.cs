@@ -19,18 +19,35 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(string? name, CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(string? name, string? searchQuery, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name)
+           && string.IsNullOrWhiteSpace(searchQuery))
         {
             return await GetCitiesReadOnlyAsync(cancellationToken);
         }
 
-        name = name.Trim();
+        // Casting IQueryable to City DbSet (for deferred execution)
+        var collection = context.Cities as IQueryable<City>;
 
-        return await context.Cities
+        if (!string.IsNullOrEmpty(name))
+        {
+            name = name.Trim();
+            collection = collection.Where(c => c.Name == name);
+        }
+
+        // Search across name and description of city
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            searchQuery = searchQuery.Trim();
+            collection = collection
+                .Where(c => c.Name.Contains(searchQuery)
+                    || (c.Description != null && c.Description.Contains(searchQuery)));
+        }
+
+        return await collection
             .AsNoTracking()
-            .Where(c => c.Name == name)
+            .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 
