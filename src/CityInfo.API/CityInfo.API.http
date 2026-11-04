@@ -130,6 +130,14 @@ Content-Type: application/json-patch+json
 ### Delete point of interest
 DELETE {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
 
+### Bulk update points of interest
+PUT {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/bulk
+Content-Type: application/json
+
+{
+    "newDescription": "This is a new description from a bulk update"
+}
+
 ###
 ### File Endpoints
 ###

@@ -175,4 +175,21 @@ public class PointsOfInterestController(
 
         return NoContent();
     }
+
+    [HttpPut("bulk")]
+    public async Task<ActionResult> BulkUpdatePointsOfInterestDescription(int cityId,
+        PointsOfInterestBulkUpdateDto pointsOfInterestBulkUpdateDto)
+    {
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        {
+            return NotFound();
+        }
+
+        var affectedRows = await cityInfoRepository
+            .UpdatePointsPointOfInterestDescriptionForCityAsync(cityId,
+            pointsOfInterestBulkUpdateDto.NewDescription);
+
+        return Ok(new { UpdateCount = affectedRows });
+    }
+
 }

@@ -66,4 +66,19 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
     {
         return await context.SaveChangesAsync() >= 0;
     }
+
+    public async Task<int> UpdatePointsPointOfInterestDescriptionForCityAsync(int cityId, string newDescription)
+    {
+        return await context.PointOfInterests
+            .Where(p => p.CityId == cityId)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(p => p.Description, newDescription)); // can be chained to multiple properties
+    }
+
+    public async Task<int> DeleteAllPointOfInterestForCityAsync(int cityId)
+    {
+        return await context.PointOfInterests
+            .Where(p => p.CityId == cityId)
+            .ExecuteDeleteAsync();
+    }
 }
