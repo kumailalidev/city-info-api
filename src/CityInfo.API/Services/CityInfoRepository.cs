@@ -27,7 +27,7 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             return await GetCitiesReadOnlyAsync(cancellationToken);
         }
 
-        // Casting IQueryable to City DbSet (for deferred execution)
+        // Casting IQueryable to City DbSet (for deferred execution; execution is deferred until the query is iterated over via ToList(), ToArray(), etc)
         var collection = context.Cities as IQueryable<City>;
 
         if (!string.IsNullOrEmpty(name))
