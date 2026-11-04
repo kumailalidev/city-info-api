@@ -5,7 +5,12 @@
 
 # Files and folders
 .etc/
+
+
+# SQLite files
 *.db
+*.db-shm
+*.db-wal
 
 # dotenv files
 .env
