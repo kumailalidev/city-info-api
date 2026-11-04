@@ -12,15 +12,26 @@ namespace CityInfo.API.Controllers;
 public class CitiesController(ICityInfoRepository cityInfoRepository,
     IMapper mapper) : ControllerBase
 {
+    const int _maxCitiesPageSize = 20;
+
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities(
         [FromQuery(Name = "name")] string? name,
         [FromQuery(Name = "searchQuery")] string? searchQuery,
+        [FromQuery(Name = "pageNumber")] int pageNumber = 1,
+        [FromQuery(Name = "pageSize")] int pageSize = 10,
         CancellationToken cancellationToken = default) // [FromQuery] attribute is optional; [ApiController] takes care of it.
     {
+        if (pageSize > _maxCitiesPageSize)
+        {
+            pageSize = _maxCitiesPageSize;
+        }
+
         var cityEntities = await cityInfoRepository.GetCitiesReadOnlyAsync(
             name,
             searchQuery,
+            pageNumber,
+            pageSize,
             cancellationToken); // Only read the data, do not track the changes (to object)
 
         return Ok(mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));

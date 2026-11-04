@@ -19,14 +19,13 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(string? name, string? searchQuery, CancellationToken cancellationToken)
+    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(
+        string? name,
+        string? searchQuery,
+        int pageNumber,
+        int PageSize,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(name)
-           && string.IsNullOrWhiteSpace(searchQuery))
-        {
-            return await GetCitiesReadOnlyAsync(cancellationToken);
-        }
-
         // Casting IQueryable to City DbSet (for deferred execution; execution is deferred until the query is iterated over via ToList(), ToArray(), etc)
         var collection = context.Cities as IQueryable<City>;
 
@@ -48,6 +47,8 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
         return await collection
             .AsNoTracking()
             .OrderBy(c => c.Name)
+            .Skip(PageSize * (pageNumber - 1))
+            .Take(PageSize)
             .ToListAsync(cancellationToken);
     }
 
