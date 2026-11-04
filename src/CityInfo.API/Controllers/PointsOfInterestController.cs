@@ -15,10 +15,11 @@ public class PointsOfInterestController(
     ICityInfoRepository cityInfoRepository,
     IMapper mapper,
     ILogger<PointsOfInterestController> logger,
-    IMailService mailService) : ControllerBase
+    IMailService mailService,
+    IPointOfInterestService pointOfInterestService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId)
+    public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId, CancellationToken cancellationToken = default)
     {
         if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
@@ -28,7 +29,7 @@ public class PointsOfInterestController(
         }
 
         var pointsOfInterestForCity = await cityInfoRepository
-            .GetPointsOfInterestForCityAsync(cityId);
+            .GetPointsOfInterestForCityAsync(cityId, cancellationToken);
 
         return Ok(mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
     }
@@ -55,30 +56,24 @@ public class PointsOfInterestController(
 
     [HttpPost]
     public async Task<ActionResult<PointOfInterestDto>> CreatePointOfInterest(int cityId,
-        PointOfInterestForCreationDto pointOfInterest) // PointOfInterestForCreationDto is a complex type, [FromBody] attribute is not required
+        PointOfInterestForCreationDto pointOfInterest,
+        CancellationToken cancellationToken = default) // PointOfInterestForCreationDto is a complex type, [FromBody] attribute is not required
     {
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        var result = await pointOfInterestService
+            .CreatePointOfInterestAsync(cityId, pointOfInterest, cancellationToken);
+
+        if (!result.Success)
         {
-            logger.LogInformation(
-            "City with id {cityId} wasn't found when accessing points of interest", cityId);
-            return NotFound();
+            return BadRequest(new { error = result.ErrorMessage });
         }
-
-        var finalPointOfInterest = mapper.Map<PointOfInterest>(pointOfInterest);
-
-        await cityInfoRepository
-            .AddPointOfInterestForCityAsync(cityId, finalPointOfInterest);
-        await cityInfoRepository.SaveChangesAsync();
-
-        var createdPointOfInterestedToReturn = mapper.Map<PointOfInterestDto>(finalPointOfInterest);
 
         return CreatedAtRoute("GetPointOfInterest",
          new
          {
              cityId,
-             pointOfInterestId = createdPointOfInterestedToReturn.Id
+             pointOfInterestId = result.PointOfInterest!.Id
          },
-         createdPointOfInterestedToReturn);
+         result.PointOfInterest);
     }
 
     [HttpDelete("{pointOfInterestId}")]

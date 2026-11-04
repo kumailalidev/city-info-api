@@ -25,6 +25,8 @@ builder.Services.AddScoped<ICityInfoRepository, CityInfoRepository>();
 builder.Services.AddAutoMapper(config => { },
     AppDomain.CurrentDomain.GetAssemblies()); // Use assemblies for auto. scan profiles
 
+builder.Services.AddScoped<IPointOfInterestService, PointOfInterestService>();
+
 #if DEBUG
 builder.Services.AddTransient<IMailService, LocalMailService>();
 #else

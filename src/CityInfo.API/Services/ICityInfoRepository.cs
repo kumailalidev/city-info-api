@@ -16,7 +16,7 @@ public interface ICityInfoRepository
         CancellationToken cancellationToken);
     Task<bool> CityExistsAsync(int cityId);
     Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest);
-    Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId);
+    Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId, CancellationToken cancellationToken);
     Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId,
         int pointOfInterestId);
     Task AddPointOfInterestForCityAsync(int cityId, PointOfInterest pointOfInterest);

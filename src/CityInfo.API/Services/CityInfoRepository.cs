@@ -84,11 +84,11 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId)
+    public async Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId, CancellationToken cancellationToken)
     {
         return await context.PointOfInterests
             .Where(p => p.CityId == cityId)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     public async Task AddPointOfInterestForCityAsync(int cityId, PointOfInterest pointOfInterest)
