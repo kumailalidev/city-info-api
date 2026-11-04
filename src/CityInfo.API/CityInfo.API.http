@@ -20,6 +20,10 @@ Accept: application/json
 GET {{baseUrl}}/api/cities
 Accept: application/xml
 
+### Get all cities (filtered)
+GET {{baseUrl}}/api/cities?name=Karachi
+Accept: application/json
+
 ### Get specific city
 GET {{baseUrl}}/api/cities/{{cityId}}
 Accept: application/json

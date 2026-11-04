@@ -19,6 +19,21 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .OrderBy(c => c.Name).ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(string? name, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return await GetCitiesReadOnlyAsync(cancellationToken);
+        }
+
+        name = name.Trim();
+
+        return await context.Cities
+            .AsNoTracking()
+            .Where(c => c.Name == name)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> CityExistsAsync(int cityId)
     {
         return await context.Cities.AnyAsync(c => c.Id == cityId);
