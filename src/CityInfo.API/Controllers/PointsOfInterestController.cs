@@ -134,30 +134,25 @@ public class PointsOfInterestController(
 
     // Partial update
     [HttpPatch("{pointOfInterestId}")]
-    public ActionResult PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId,
+    public async Task<ActionResult> PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId,
         JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument)
     {
-        var city = citiesDataStore
-            .Cities.FirstOrDefault(c => c.Id == cityId);
-        if (city == null)
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
             return NotFound();
         }
 
-        var pointOfInterestFromStore = city.PointsOfInterest
-            .FirstOrDefault(p => p.Id == pointOfInterestId);
-        if (pointOfInterestFromStore == null)
+        var pointOfInterestEntity = await cityInfoRepository
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+
+        if (pointOfInterestEntity == null)
         {
             return NotFound();
         }
 
         // Transforming to PointOfInterestForUpdateDto obj.
-        var pointOfInterestToPatch =
-            new PointOfInterestForUpdateDto()
-            {
-                Name = pointOfInterestFromStore.Name,
-                Description = pointOfInterestFromStore.Description
-            };
+        var pointOfInterestToPatch = mapper
+            .Map<PointOfInterestForUpdateDto>(pointOfInterestEntity);
 
         patchDocument.ApplyTo(pointOfInterestToPatch, jsonPatchError =>
         {
@@ -176,8 +171,9 @@ public class PointsOfInterestController(
             return BadRequest(ModelState);
         }
 
-        pointOfInterestFromStore.Name = pointOfInterestToPatch.Name;
-        pointOfInterestFromStore.Description = pointOfInterestToPatch.Description;
+        mapper.Map(pointOfInterestToPatch, pointOfInterestEntity); // Modifying tracked pointOfInterestToPatch with pointOfInterestEntity values
+        await cityInfoRepository.SaveChangesAsync();
+
         return NoContent();
     }
 }

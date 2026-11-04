@@ -71,7 +71,7 @@ PUT {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest/{{pointOfInterestId}}
 Content-Type: application/json
 
 {
-    "name": "Updated point of interest name",
+    "name": "Updated point of interest name"
 }
 
 ### Partially update point of interest (PATCH with JSON patch - replace operation)
