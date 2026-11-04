@@ -109,27 +109,25 @@ public class PointsOfInterestController(
 
     // Full update
     [HttpPut("{pointOfInterestId}")]
-    public ActionResult UpdatePointOfInterest(int cityId,
+    public async Task<ActionResult> UpdatePointOfInterest(int cityId,
         int pointOfInterestId,
         PointOfInterestForUpdateDto pointOfInterest)
     {
-        var city = citiesDataStore
-            .Cities.FirstOrDefault(c => c.Id == cityId);
-        if (city == null)
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
             return NotFound();
         }
 
-        var pointOfInterestFromStore = city.PointsOfInterest
-            .FirstOrDefault(p => p.Id == pointOfInterestId);
-        if (pointOfInterestFromStore == null)
+        var pointOfInterestEntity = await cityInfoRepository
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+
+        if (pointOfInterestEntity == null)
         {
             return NotFound();
         }
 
-        // Fully update the resource; If consumer does not provide a value for a field, set as default value
-        pointOfInterestFromStore.Name = pointOfInterest.Name;
-        pointOfInterestFromStore.Description = pointOfInterest.Description;
+        mapper.Map(pointOfInterest, pointOfInterestEntity); // Modifying tracked pointOfInterestEntity with pointOfInterest values
+        await cityInfoRepository.SaveChangesAsync();
 
         return NoContent();
     }
