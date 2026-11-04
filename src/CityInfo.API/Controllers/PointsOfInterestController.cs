@@ -12,7 +12,6 @@ namespace CityInfo.API.Controllers;
 [Route("api/cities/{cityId}/pointsofinterest")]
 [ApiController]
 public class PointsOfInterestController(
-    CitiesDataStore citiesDataStore,
     ICityInfoRepository cityInfoRepository,
     IMapper mapper,
     ILogger<PointsOfInterestController> logger,
@@ -83,26 +82,26 @@ public class PointsOfInterestController(
     }
 
     [HttpDelete("{pointOfInterestId}")]
-    public ActionResult DeletePointOfInterest(int cityId, int pointOfInterestId)
+    public async Task<ActionResult> DeletePointOfInterest(int cityId, int pointOfInterestId)
     {
-        var city = citiesDataStore
-            .Cities.FirstOrDefault(c => c.Id == cityId);
-        if (city == null)
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
             return NotFound();
         }
 
-        var pointOfInterestFromStore = city.PointsOfInterest
-            .FirstOrDefault(p => p.Id == pointOfInterestId);
-        if (pointOfInterestFromStore == null)
+        var pointOfInterestEntity = await cityInfoRepository
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+
+        if (pointOfInterestEntity == null)
         {
             return NotFound();
         }
 
-        city.PointsOfInterest.Remove(pointOfInterestFromStore);
+        cityInfoRepository.DeletePointOfInterest(pointOfInterestEntity);
+        await cityInfoRepository.SaveChangesAsync();
 
         mailService.Send("Point of interest deleted.",
-            $"Point of interest {pointOfInterestFromStore.Name} with id {pointOfInterestFromStore.Id} was deleted");
+            $"Point of interest {pointOfInterestEntity.Name} with id {pointOfInterestEntity.Id} was deleted");
 
         return NoContent();
     }

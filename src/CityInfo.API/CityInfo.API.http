@@ -24,7 +24,7 @@ Accept: application/xml
 GET {{baseUrl}}/api/cities/{{cityId}}
 Accept: application/json
 
-### Get specific city with point of interest
+### Get specific city with points of interest
 GET {{baseUrl}}/api/cities/{{cityId}}?includePointsOfInterest=true
 Accept: application/json
 

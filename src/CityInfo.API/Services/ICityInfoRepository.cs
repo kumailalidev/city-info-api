@@ -13,5 +13,6 @@ public interface ICityInfoRepository
     Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId,
         int pointOfInterestId);
     Task AddPointOfInterestForCityAsync(int cityId, PointOfInterest pointOfInterest);
+    void DeletePointOfInterest(PointOfInterest pointOfInterest); // Not async: In-Memory OP,NOT I/O method
     Task<bool> SaveChangesAsync();
 }
