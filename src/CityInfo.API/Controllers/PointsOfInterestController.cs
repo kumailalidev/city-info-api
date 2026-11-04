@@ -1,5 +1,6 @@
 using AutoMapper;
 
+using CityInfo.API.Entities;
 using CityInfo.API.Models;
 using CityInfo.API.Services;
 
@@ -54,36 +55,31 @@ public class PointsOfInterestController(
     }
 
     [HttpPost]
-    public ActionResult<PointOfInterestDto> CreatePointOfInterest(int cityId,
+    public async Task<ActionResult<PointOfInterestDto>> CreatePointOfInterest(int cityId,
         PointOfInterestForCreationDto pointOfInterest) // PointOfInterestForCreationDto is a complex type, [FromBody] attribute is not required
     {
-        var city = citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        if (city == null)
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
+            logger.LogInformation(
+            "City with id {cityId} wasn't found when accessing points of interest", cityId);
             return NotFound();
         }
 
-        // calculating max id for point of interest
-        var maxPointOfInterestId = citiesDataStore.Cities
-            .SelectMany(c => c.PointsOfInterest)
-            .Max(p => p.Id);
+        var finalPointOfInterest = mapper.Map<PointOfInterest>(pointOfInterest);
 
-        var finalPointOfInterest = new PointOfInterestDto()
-        {
-            Id = ++maxPointOfInterestId,
-            Name = pointOfInterest.Name,
-            Description = pointOfInterest.Description
-        };
+        await cityInfoRepository
+            .AddPointOfInterestForCityAsync(cityId, finalPointOfInterest);
+        await cityInfoRepository.SaveChangesAsync();
 
-        city.PointsOfInterest.Add(finalPointOfInterest);
+        var createdPointOfInterestedToReturn = mapper.Map<PointOfInterestDto>(finalPointOfInterest);
 
         return CreatedAtRoute("GetPointOfInterest",
          new
          {
              cityId,
-             pointOfInterestId = finalPointOfInterest.Id
+             pointOfInterestId = createdPointOfInterestedToReturn.Id
          },
-         finalPointOfInterest);
+         createdPointOfInterestedToReturn);
     }
 
     [HttpDelete("{pointOfInterestId}")]

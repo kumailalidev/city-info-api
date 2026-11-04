@@ -50,4 +50,15 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
             .Where(p => p.CityId == cityId)
             .ToListAsync();
     }
+
+    public async Task AddPointOfInterestForCityAsync(int cityId, PointOfInterest pointOfInterest)
+    {
+        var city = await GetCityAsync(cityId, false);
+        city?.PointsOfInterest.Add(pointOfInterest);
+    }
+
+    public async Task<bool> SaveChangesAsync()
+    {
+        return await context.SaveChangesAsync() >= 0;
+    }
 }
