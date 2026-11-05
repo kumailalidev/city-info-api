@@ -21,31 +21,20 @@ public class PointsOfInterestController(
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId, CancellationToken cancellationToken = default)
     {
-        try
+        logger.LogInformation(
+        "Getting points of interest for city with id {cityId}", cityId);
+
+        if (!await cityInfoRepository.CityExistsAsync(cityId))
         {
             logger.LogInformation(
-            "Getting points of interest for city with id {cityId}", cityId);
-
-            if (!await cityInfoRepository.CityExistsAsync(cityId))
-            {
-                logger.LogInformation(
-                "City with id {cityId} wasn't found when accessing points of interest", cityId);
-                return NotFound();
-            }
-
-            var pointsOfInterestForCity = await cityInfoRepository
-                .GetPointsOfInterestForCityAsync(cityId, cancellationToken);
-
-            return Ok(mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
+            "City with id {cityId} wasn't found when accessing points of interest", cityId);
+            return NotFound();
         }
-        catch (Exception ex)
-        {
-            logger.LogCritical(ex,
-                "Exception while getting points of interest for city with id {cityId}",
-                cityId);
-            return StatusCode(500,
-                "A problem happened while handling your request");
-        }
+
+        var pointsOfInterestForCity = await cityInfoRepository
+            .GetPointsOfInterestForCityAsync(cityId, cancellationToken);
+
+        return Ok(mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
     }
 
     [HttpGet("{pointOfInterestId}", Name = "GetPointOfInterest")]

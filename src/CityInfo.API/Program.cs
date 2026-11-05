@@ -11,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers()
     .AddXmlDataContractSerializerFormatters();
+
+
+builder.Services.AddProblemDetails();
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
@@ -40,6 +44,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+// add exception handler middleware
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler();
 }
 
 app.UseHttpsRedirection();
