@@ -7,6 +7,7 @@ using CityInfo.API.Services;
 
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 using Scalar.AspNetCore;
 
@@ -41,6 +42,8 @@ builder.Services.AddProblemDetails();
 // for detecting and reading generated document file
 builder.Services.AddOpenApi("v1", options =>
 {
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+
     // Customizing OpenAPI doc.
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
@@ -56,6 +59,8 @@ builder.Services.AddOpenApi("v1", options =>
 });
 builder.Services.AddOpenApi("v2", options =>
 {
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+
     // Customizing OpenAPI doc.
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
