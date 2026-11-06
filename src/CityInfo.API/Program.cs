@@ -31,12 +31,16 @@ builder.Services.AddControllers()
 builder.Services.AddProblemDetails();
 
 // Register OpenApi services with multiple version support
-var apiVersions = new[] { "v1", "v2" };
-foreach (var apiVersion in apiVersions)
-{
-    builder.Services.AddOpenApi(apiVersion);
-}
+// var apiVersions = new[] { "v1", "v2" };
+// foreach (var apiVersion in apiVersions)
+// {
+//     builder.Services.AddOpenApi(apiVersion);
+// }
 
+// Register OpenApi services with multiple version support using string literals; required
+// for detecting and reading generated document file
+builder.Services.AddOpenApi("v1");
+builder.Services.AddOpenApi("v2");
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
