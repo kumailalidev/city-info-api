@@ -8,6 +8,8 @@ using CityInfo.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
+using Scalar.AspNetCore;
+
 using Serilog;
 
 // Serilog configuration
@@ -83,6 +85,14 @@ if (!app.Environment.IsDevelopment())
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi("/openapi/{documentName}.json");
+
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("City Info API")
+         .WithTheme(ScalarTheme.Solarized)
+         .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
+         .AddPreferredSecuritySchemes("Bearer");
+    });
 }
 
 app.UseHttpsRedirection();
