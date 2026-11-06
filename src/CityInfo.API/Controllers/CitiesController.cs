@@ -56,6 +56,9 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
     /// <param name="cancellationToken">The injected cancellation token</param>
     /// <returns>A city with of without points of interest</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)] // If request is malformed; 400 is returned; [ApiController] adds this behavior 
     public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false, CancellationToken cancellationToken = default)
     {
         var city = await cityInfoRepository

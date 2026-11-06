@@ -32,7 +32,7 @@ GET {{baseUrl}}/api/cities?pageNumber=1&pageSize=2
 Accept: application/json
 
 ### Get specific city
-GET {{baseUrl}}/api/cities/{{cityId}}
+GET {{baseUrl}}/api/v1/cities/{{cityId}}
 Accept: application/json
 
 ### Get specific city with points of interest
