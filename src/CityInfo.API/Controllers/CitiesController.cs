@@ -51,18 +51,18 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
     /// <summary>
     /// Get a city by id
     /// </summary>
-    /// <param name="id">The id of the city to get</param>
+    /// <param name="cityId">The id of the city to get</param>
     /// <param name="includePointsOfInterest">Whether of not to include the point of interest</param>
     /// <param name="cancellationToken">The injected cancellation token</param>
     /// <returns>A city with of without points of interest</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{cityId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)] // If request is malformed; 400 is returned; [ApiController] adds this behavior 
-    public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCity(int cityId, bool includePointsOfInterest = false, CancellationToken cancellationToken = default)
     {
         var city = await cityInfoRepository
-            .GetCityAsync(id, includePointsOfInterest);
+            .GetCityAsync(cityId, includePointsOfInterest);
 
         if (city == null)
         {
