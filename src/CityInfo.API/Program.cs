@@ -1,3 +1,5 @@
+using Asp.Versioning;
+
 using CityInfo.API;
 using CityInfo.API.Data;
 using CityInfo.API.DbContexts;
@@ -48,6 +50,14 @@ builder.Services.AddTransient<IMailService, LocalMailService>();
 #else
 builder.Services.AddTransient<IMailService, CloudMailService>();
 #endif
+
+builder.Services.AddApiVersioning(setupAction =>
+{
+    setupAction.ApiVersionReader = new QueryStringApiVersionReader();
+    setupAction.ReportApiVersions = true;
+    setupAction.AssumeDefaultVersionWhenUnspecified = true;
+    setupAction.DefaultApiVersion = new ApiVersion(1, 0);
+}).AddMvc();
 
 var app = builder.Build();
 
