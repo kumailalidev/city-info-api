@@ -28,7 +28,13 @@ builder.Services.AddControllers()
 
 builder.Services.AddProblemDetails();
 
-builder.Services.AddOpenApi();
+// Register OpenApi services with multiple version support
+var apiVersions = new[] { "v1", "v2" };
+foreach (var apiVersion in apiVersions)
+{
+    builder.Services.AddOpenApi(apiVersion);
+}
+
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
@@ -53,24 +59,30 @@ builder.Services.AddTransient<IMailService, CloudMailService>();
 
 builder.Services.AddApiVersioning(setupAction =>
 {
-    setupAction.ApiVersionReader = new QueryStringApiVersionReader();
     setupAction.ReportApiVersions = true;
     setupAction.AssumeDefaultVersionWhenUnspecified = true;
     setupAction.DefaultApiVersion = new ApiVersion(1, 0);
-}).AddMvc();
+})
+.AddMvc()
+.AddApiExplorer(setupAction =>
+{
+    setupAction.SubstituteApiVersionInUrl = true;
+    setupAction.GroupNameFormat = "'v'V";
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 // add exception handler middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi("/openapi/{documentName}.json");
 }
 
 app.UseHttpsRedirection();
