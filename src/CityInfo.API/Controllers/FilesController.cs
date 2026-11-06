@@ -1,3 +1,5 @@
+using Asp.Versioning;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -8,6 +10,7 @@ namespace CityInfo.API.Controllers;
 public class FilesController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider) : ControllerBase
 {
     [HttpGet("{fileId}")]
+    [ApiVersion(0.1, Deprecated = true)] // Lower number is given because API is deprecated
     public async Task<ActionResult> GetFile(string fileId)
     {
         // look up the actual file, depending on the fileId

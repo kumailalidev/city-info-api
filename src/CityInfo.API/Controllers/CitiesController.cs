@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 
+using Asp.Versioning;
+
 using AutoMapper;
 
 using CityInfo.API.Models;
@@ -9,8 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controllers;
 
+[Route("api/v{version:apiVersion}/cities")] // or "api/v{version:apiVersion}/[controller]"
 [ApiController]
-[Route("api/cities")] // or "api/[controller]"
+[ApiVersion(1)] // default
 public class CitiesController(ICityInfoRepository cityInfoRepository,
     IMapper mapper) : ControllerBase
 {

@@ -11,9 +11,8 @@
 ### Cities Endpoints
 ###
 
-
-### Get all cities
-GET {{baseUrl}}/api/cities
+### Get all cities (versioned with v1)
+GET {{baseUrl}}/api/v1/cities
 Accept: application/json
 
 ### Get all cities (XML format)
@@ -44,8 +43,8 @@ Accept: application/json
 GET {{baseUrl}}/api/cities/999
 Accept: application/json
 
-### Get all points of interest for a city
-GET {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest
+### Get all points of interest for a city (versioned with ap-version - v1)
+GET {{baseUrl}}/api/cities/{{cityId}}/pointsofinterest?api-version=1
 Accept: application/json
 
 ### Get points of interest for a city that doesn't exists
@@ -155,7 +154,7 @@ Content-Type: application/json
 ###
 
 ### Get a file
-GET {{baseUrl}}/api/files/sample-file-identifier
+GET {{baseUrl}}/api/files/sample-file-identifier?api-version=0.1
 Accept: text/plain
 
 
