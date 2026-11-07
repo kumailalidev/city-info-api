@@ -11,6 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controllers;
 
+/// <summary>
+/// Handles requests related to cities and their points of interest.
+/// </summary>
+/// <param name="cityInfoRepository">The repository used to access city data.</param>
+/// <param name="mapper">The mapper used to map entities to DTOs.</param>
 [Route("api/v{version:apiVersion}/cities")] // or "api/v{version:apiVersion}/[controller]"
 [ApiController]
 [ApiVersion(1)] // default
@@ -19,6 +24,15 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
 {
     const int _maxCitiesPageSize = 20;
 
+    /// <summary>
+    /// Gets a paginated list of cities, optionally filtered by name or search query.
+    /// </summary>
+    /// <param name="name">Optional city name filter.</param>
+    /// <param name="searchQuery">Optional text used to search city names and descriptions.</param>
+    /// <param name="pageNumber">The page number to return.</param>
+    /// <param name="pageSize">The number of cities per page.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A paginated list of cities.</returns>
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities(
         [FromQuery(Name = "name")] string? name,
