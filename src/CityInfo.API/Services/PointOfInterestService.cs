@@ -13,7 +13,7 @@ public class PointOfInterestService(ICityInfoRepository repository,
         PointOfInterestForCreationDto pointOfInterest,
         CancellationToken cancellationToken)
     {
-        if (!await repository.CityExistsAsync(cityId))
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
         {
             return PointOfInterestForCreationResult.Failed("City not found");
         }
@@ -29,8 +29,8 @@ public class PointOfInterestService(ICityInfoRepository repository,
         }
 
         var pointOfInterestEntity = mapper.Map<PointOfInterest>(pointOfInterest);
-        await repository.AddPointOfInterestForCityAsync(cityId, pointOfInterestEntity);
-        await repository.SaveChangesAsync();
+        await repository.AddPointOfInterestForCityAsync(cityId, pointOfInterestEntity, cancellationToken);
+        await repository.SaveChangesAsync(cancellationToken);
 
         await SendCreationNotificationAsync(cityId, pointOfInterestEntity);
 

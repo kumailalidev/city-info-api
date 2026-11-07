@@ -27,7 +27,7 @@ public class PointsOfInterestController(
         logger.LogInformation(
         "Getting points of interest for city with id {cityId}", cityId);
 
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             logger.LogInformation(
             "City with id {cityId} wasn't found when accessing points of interest", cityId);
@@ -41,9 +41,10 @@ public class PointsOfInterestController(
     }
 
     [HttpGet("{pointOfInterestId}", Name = "GetPointOfInterest")]
-    public async Task<ActionResult<PointOfInterestDto>> GetPointOfInterest(int cityId, int pointOfInterestId)
+    public async Task<ActionResult<PointOfInterestDto>> GetPointOfInterest(int cityId, int pointOfInterestId,
+        CancellationToken cancellationToken)
     {
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             logger.LogInformation(
             "City with id {cityId} wasn't found when accessing points of interest", cityId);
@@ -51,7 +52,7 @@ public class PointsOfInterestController(
         }
 
         var pointOfInterest = await cityInfoRepository
-            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId, cancellationToken);
         if (pointOfInterest == null)
         {
             return NotFound();
@@ -83,15 +84,16 @@ public class PointsOfInterestController(
     }
 
     [HttpDelete("{pointOfInterestId}")]
-    public async Task<ActionResult> DeletePointOfInterest(int cityId, int pointOfInterestId)
+    public async Task<ActionResult> DeletePointOfInterest(int cityId, int pointOfInterestId,
+        CancellationToken cancellationToken)
     {
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             return NotFound();
         }
 
         var pointOfInterestEntity = await cityInfoRepository
-            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId, cancellationToken);
 
         if (pointOfInterestEntity == null)
         {
@@ -99,7 +101,7 @@ public class PointsOfInterestController(
         }
 
         cityInfoRepository.DeletePointOfInterest(pointOfInterestEntity);
-        await cityInfoRepository.SaveChangesAsync();
+        await cityInfoRepository.SaveChangesAsync(cancellationToken);
 
         mailService.Send("Point of interest deleted.",
             $"Point of interest {pointOfInterestEntity.Name} with id {pointOfInterestEntity.Id} was deleted");
@@ -111,15 +113,16 @@ public class PointsOfInterestController(
     [HttpPut("{pointOfInterestId}")]
     public async Task<ActionResult> UpdatePointOfInterest(int cityId,
         int pointOfInterestId,
-        PointOfInterestForUpdateDto pointOfInterest)
+        PointOfInterestForUpdateDto pointOfInterest,
+        CancellationToken cancellationToken)
     {
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             return NotFound();
         }
 
         var pointOfInterestEntity = await cityInfoRepository
-            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId, cancellationToken);
 
         if (pointOfInterestEntity == null)
         {
@@ -127,7 +130,7 @@ public class PointsOfInterestController(
         }
 
         mapper.Map(pointOfInterest, pointOfInterestEntity); // Modifying tracked pointOfInterestEntity with pointOfInterest values
-        await cityInfoRepository.SaveChangesAsync();
+        await cityInfoRepository.SaveChangesAsync(cancellationToken);
 
         return NoContent();
     }
@@ -135,15 +138,16 @@ public class PointsOfInterestController(
     // Partial update
     [HttpPatch("{pointOfInterestId}")]
     public async Task<ActionResult> PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId,
-        JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument)
+        JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument,
+        CancellationToken cancellationToken)
     {
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             return NotFound();
         }
 
         var pointOfInterestEntity = await cityInfoRepository
-            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId);
+            .GetPointOfInterestForCityAsync(cityId, pointOfInterestId, cancellationToken);
 
         if (pointOfInterestEntity == null)
         {
@@ -172,23 +176,25 @@ public class PointsOfInterestController(
         }
 
         mapper.Map(pointOfInterestToPatch, pointOfInterestEntity); // Modifying tracked pointOfInterestToPatch with pointOfInterestEntity values
-        await cityInfoRepository.SaveChangesAsync();
+        await cityInfoRepository.SaveChangesAsync(cancellationToken);
 
         return NoContent();
     }
 
     [HttpPut("bulk")]
     public async Task<ActionResult> BulkUpdatePointsOfInterestDescription(int cityId,
-        PointsOfInterestBulkUpdateDto pointsOfInterestBulkUpdateDto)
+        PointsOfInterestBulkUpdateDto pointsOfInterestBulkUpdateDto,
+        CancellationToken cancellationToken)
     {
-        if (!await cityInfoRepository.CityExistsAsync(cityId))
+        if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             return NotFound();
         }
 
         var affectedRows = await cityInfoRepository
             .UpdatePointsPointOfInterestDescriptionForCityAsync(cityId,
-            pointsOfInterestBulkUpdateDto.NewDescription);
+            pointsOfInterestBulkUpdateDto.NewDescription,
+            cancellationToken);
 
         return Ok(new { UpdateCount = affectedRows });
     }

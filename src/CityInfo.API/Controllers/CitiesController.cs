@@ -62,7 +62,7 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
     public async Task<IActionResult> GetCity(int cityId, bool includePointsOfInterest = false, CancellationToken cancellationToken = default)
     {
         var city = await cityInfoRepository
-            .GetCityAsync(cityId, includePointsOfInterest);
+            .GetCityAsync(cityId, includePointsOfInterest, cancellationToken);
 
         if (city == null)
         {

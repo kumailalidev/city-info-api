@@ -9,15 +9,18 @@ namespace CityInfo.API;
 
 public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
 {
-    public async Task<IEnumerable<City>> GetCitiesAsync()
+    public async Task<IEnumerable<City>> GetCitiesAsync(CancellationToken cancellationToken)
     {
-        return await context.Cities.OrderBy(c => c.Name).ToListAsync();
+        return await context.Cities
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<City>> GetCitiesReadOnlyAsync(CancellationToken cancellationToken)
     {
         return await context.Cities.AsNoTracking()
-            .OrderBy(c => c.Name).ToListAsync(cancellationToken);
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<(IEnumerable<City>, PaginationMetadata?)> GetCitiesReadOnlyAsync(
@@ -59,41 +62,48 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
         return (collectionToReturn, paginationMetadata);
     }
 
-    public async Task<bool> CityExistsAsync(int cityId)
+    public async Task<bool> CityExistsAsync(int cityId, CancellationToken cancellationToken)
     {
-        return await context.Cities.AnyAsync(c => c.Id == cityId);
+        return await context.Cities.AnyAsync(c => c.Id == cityId, cancellationToken);
     }
 
-    public async Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest)
+    public async Task<City?> GetCityAsync(int cityId,
+        bool includePointsOfInterest,
+        CancellationToken cancellationToken)
     {
         if (includePointsOfInterest)
         {
             return await context.Cities.Include(c => c.PointsOfInterest) // Eager loading
                 .Where(c => c.Id == cityId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         return await context.Cities.Where(c => c.Id == cityId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId, int pointOfInterestId)
+    public async Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId,
+        int pointOfInterestId,
+        CancellationToken cancellationToken)
     {
         return await context.PointOfInterests
             .Where(p => p.CityId == cityId && p.Id == pointOfInterestId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId,
+        CancellationToken cancellationToken)
     {
         return await context.PointOfInterests
             .Where(p => p.CityId == cityId)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task AddPointOfInterestForCityAsync(int cityId, PointOfInterest pointOfInterest)
+    public async Task AddPointOfInterestForCityAsync(int cityId,
+        PointOfInterest pointOfInterest,
+        CancellationToken cancellationToken)
     {
-        var city = await GetCityAsync(cityId, false);
+        var city = await GetCityAsync(cityId, false, cancellationToken);
         city?.PointsOfInterest.Add(pointOfInterest);
     }
 
@@ -102,23 +112,27 @@ public class CityInfoRepository(CityInfoContext context) : ICityInfoRepository
         context.PointOfInterests.Remove(pointOfInterest);
     }
 
-    public async Task<bool> SaveChangesAsync()
+    public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
     {
-        return await context.SaveChangesAsync() >= 0;
+        return await context.SaveChangesAsync(cancellationToken) >= 0;
     }
 
-    public async Task<int> UpdatePointsPointOfInterestDescriptionForCityAsync(int cityId, string newDescription)
+    public async Task<int> UpdatePointsPointOfInterestDescriptionForCityAsync(int cityId,
+        string newDescription,
+        CancellationToken cancellationToken)
     {
         return await context.PointOfInterests
             .Where(p => p.CityId == cityId)
             .ExecuteUpdateAsync(setters => setters
-                .SetProperty(p => p.Description, newDescription)); // can be chained to multiple properties
+                .SetProperty(p => p.Description, newDescription),
+                cancellationToken); // can be chained to multiple properties
     }
 
-    public async Task<int> DeleteAllPointOfInterestForCityAsync(int cityId)
+    public async Task<int> DeleteAllPointOfInterestForCityAsync(int cityId,
+        CancellationToken cancellationToken)
     {
         return await context.PointOfInterests
             .Where(p => p.CityId == cityId)
-            .ExecuteDeleteAsync();
+            .ExecuteDeleteAsync(cancellationToken);
     }
 }

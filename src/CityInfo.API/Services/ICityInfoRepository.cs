@@ -6,7 +6,7 @@ namespace CityInfo.API.Services;
 public interface ICityInfoRepository
 {
     // IQueryable<City> GetCities();
-    Task<IEnumerable<City>> GetCitiesAsync();
+    Task<IEnumerable<City>> GetCitiesAsync(CancellationToken cancellationToken);
     Task<IEnumerable<City>> GetCitiesReadOnlyAsync(CancellationToken cancellationToken);
     Task<(IEnumerable<City>, PaginationMetadata?)> GetCitiesReadOnlyAsync(
         string? name,
@@ -14,14 +14,19 @@ public interface ICityInfoRepository
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken);
-    Task<bool> CityExistsAsync(int cityId);
-    Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest);
+    Task<bool> CityExistsAsync(int cityId, CancellationToken cancellationToken);
+    Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest, CancellationToken cancellationToken);
     Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId, CancellationToken cancellationToken);
     Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId,
-        int pointOfInterestId);
-    Task AddPointOfInterestForCityAsync(int cityId, PointOfInterest pointOfInterest);
+        int pointOfInterestId,
+        CancellationToken cancellationToken);
+    Task AddPointOfInterestForCityAsync(int cityId,
+        PointOfInterest pointOfInterest,
+        CancellationToken cancellationToken);
     void DeletePointOfInterest(PointOfInterest pointOfInterest); // Not async: In-Memory OP,NOT I/O method
-    Task<int> UpdatePointsPointOfInterestDescriptionForCityAsync(int cityId, string newDescription);
-    Task<int> DeleteAllPointOfInterestForCityAsync(int cityId);
-    Task<bool> SaveChangesAsync();
+    Task<int> UpdatePointsPointOfInterestDescriptionForCityAsync(int cityId,
+        string newDescription,
+        CancellationToken cancellationToken);
+    Task<int> DeleteAllPointOfInterestForCityAsync(int cityId, CancellationToken cancellationToken);
+    Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
 }
