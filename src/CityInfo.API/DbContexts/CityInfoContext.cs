@@ -4,11 +4,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CityInfo.API.DbContexts;
 
+/// <summary>
+/// Represents the Entity Framework Core database context for the city information API.
+/// </summary>
+/// <param name="options">The options used to configure the database context.</param>
 public class CityInfoContext(DbContextOptions<CityInfoContext> options) : DbContext(options)
 {
+    /// <summary>
+    /// Gets or sets the collection of cities in the database.
+    /// </summary>
     public DbSet<City> Cities { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of points of interest in the database.
+    /// </summary>
     public DbSet<PointOfInterest> PointOfInterests { get; set; }
 
+    /// <summary>
+    /// Configures the entity model for the database context and seeds initial city and point-of-interest data.
+    /// </summary>
+    /// <param name="modelBuilder">The model builder used to configure the entity model.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<City>()
