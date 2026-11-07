@@ -1,14 +1,24 @@
 using AutoMapper;
 
-using CityInfo.API;
 using CityInfo.API.Entities;
 using CityInfo.API.Models;
-using CityInfo.API.Services;
 
+namespace CityInfo.API.Services;
+
+/// <summary>
+/// Provides operations for creating and managing city points of interest.
+/// </summary>
 public class PointOfInterestService(ICityInfoRepository repository,
     IMapper mapper,
     IMailService mailService) : IPointOfInterestService
 {
+    /// <summary>
+    /// Creates a new point of interest for the specified city.
+    /// </summary>
+    /// <param name="cityId">The identifier of the city.</param>
+    /// <param name="pointOfInterest">The point of interest details to create.</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+    /// <returns>The result of the create operation.</returns>
     public async Task<PointOfInterestForCreationResult> CreatePointOfInterestAsync(int cityId,
         PointOfInterestForCreationDto pointOfInterest,
         CancellationToken cancellationToken)
