@@ -22,7 +22,8 @@ public class PointsOfInterestController(
     IMailService mailService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId,
+        CancellationToken cancellationToken = default)
     {
         logger.LogInformation(
         "Getting points of interest for city with id {cityId}", cityId);
@@ -42,7 +43,7 @@ public class PointsOfInterestController(
 
     [HttpGet("{pointOfInterestId}", Name = "GetPointOfInterest")]
     public async Task<ActionResult<PointOfInterestDto>> GetPointOfInterest(int cityId, int pointOfInterestId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
@@ -85,7 +86,7 @@ public class PointsOfInterestController(
 
     [HttpDelete("{pointOfInterestId}")]
     public async Task<ActionResult> DeletePointOfInterest(int cityId, int pointOfInterestId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
@@ -114,7 +115,7 @@ public class PointsOfInterestController(
     public async Task<ActionResult> UpdatePointOfInterest(int cityId,
         int pointOfInterestId,
         PointOfInterestForUpdateDto pointOfInterest,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
@@ -139,7 +140,7 @@ public class PointsOfInterestController(
     [HttpPatch("{pointOfInterestId}")]
     public async Task<ActionResult> PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId,
         JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
@@ -184,7 +185,7 @@ public class PointsOfInterestController(
     [HttpPut("bulk")]
     public async Task<ActionResult> BulkUpdatePointsOfInterestDescription(int cityId,
         PointsOfInterestBulkUpdateDto pointsOfInterestBulkUpdateDto,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {

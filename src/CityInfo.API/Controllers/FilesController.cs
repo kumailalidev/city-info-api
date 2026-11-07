@@ -11,7 +11,7 @@ public class FilesController(FileExtensionContentTypeProvider fileExtensionConte
 {
     [HttpGet("{fileId}")]
     [ApiVersion(0.1, Deprecated = true)] // Lower number is given because API is deprecated
-    public async Task<ActionResult> GetFile(string fileId)
+    public async Task<ActionResult> GetFile(string fileId, CancellationToken cancellationToken = default)
     {
         // look up the actual file, depending on the fileId
         // demo code
@@ -28,12 +28,12 @@ public class FilesController(FileExtensionContentTypeProvider fileExtensionConte
             contentType = "application/octet-stream";
         }
 
-        var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile);
+        var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile, cancellationToken);
         return File(bytes, contentType, Path.GetFileName(pathToFile));
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateFile(IFormFile file) // `IFormFile` represents file sent with http req.
+    public async Task<ActionResult> CreateFile(IFormFile file, CancellationToken cancellationToken = default) // `IFormFile` represents file sent with http req.
     {
         // Validate the input.
         if (file.Length is 0
@@ -49,7 +49,7 @@ public class FilesController(FileExtensionContentTypeProvider fileExtensionConte
             $"uploaded_file_{Guid.NewGuid()}.txt");
 
         await using var stream = new FileStream(path, FileMode.Create);
-        await file.CopyToAsync(stream);
+        await file.CopyToAsync(stream, cancellationToken);
         return Ok("Your file has been uploaded successfully");
     }
 }
