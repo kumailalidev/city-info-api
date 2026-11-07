@@ -2,10 +2,19 @@
 
 namespace CityInfo.API.Data;
 
+/// <summary>
+/// Provides an in-memory data store for city records and their points of interest.
+/// </summary>
 public class CitiesDataStore
 {
+    /// <summary>
+    /// Gets or sets the collection of cities available in the data store.
+    /// </summary>
     public List<CityDto> Cities { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CitiesDataStore"/> class with sample city data.
+    /// </summary>
     public CitiesDataStore()
     {
         Cities =
