@@ -18,7 +18,7 @@ namespace CityInfo.API.Controllers;
 /// <param name="pointOfInterestService">The service used to manage point-of-interest operations.</param>
 /// <param name="mapper">The object mapper used to map entities to DTOs.</param>
 /// <param name="mailService">The mail service used to send notifications.</param>
-[Route("api/cities/{cityId}/pointsofinterest")]
+[Route("api/v{version:apiVersion}/cities/{cityId}/pointsofinterest")]
 [ApiController]
 [ApiVersion(1)] // default
 public class PointsOfInterestController(

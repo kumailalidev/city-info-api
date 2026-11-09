@@ -1,6 +1,5 @@
 using Asp.Versioning;
 
-using CityInfo.API;
 using CityInfo.API.Data;
 using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
@@ -41,23 +40,6 @@ builder.Services.AddProblemDetails();
 // Register OpenApi services with multiple version support using string literals; required
 // for detecting and reading generated document file
 builder.Services.AddOpenApi("v1", options =>
-{
-    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
-
-    // Customizing OpenAPI doc.
-    options.AddDocumentTransformer((document, context, cancellationToken) =>
-    {
-        document.Info = new()
-        {
-            Title = "City Info API",
-            Version = context.DocumentName,
-            Description = "Through this API you can access cities and their points of interest."
-        };
-
-        return Task.CompletedTask;
-    });
-});
-builder.Services.AddOpenApi("v2", options =>
 {
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
 

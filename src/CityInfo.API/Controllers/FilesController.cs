@@ -8,8 +8,9 @@ namespace CityInfo.API.Controllers;
 /// <summary>
 /// Provides endpoints for retrieving and uploading files.
 /// </summary>
-[Route("api/files")]
+[Route("api/v{version:apiVersion}/files")]
 [ApiController]
+[ApiVersion(1)] // default
 public class FilesController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider) : ControllerBase
 {
     /// <summary>
