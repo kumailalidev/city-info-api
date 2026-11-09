@@ -1,7 +1,9 @@
 using Asp.Versioning;
 
+using CityInfo.API.Models;
+using CityInfo.API.Services;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace CityInfo.API.Controllers;
 
@@ -11,7 +13,7 @@ namespace CityInfo.API.Controllers;
 [Route("api/v{version:apiVersion}/files")]
 [ApiController]
 [ApiVersion(1)] // default
-public class FilesController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider) : ControllerBase
+public class FilesController(IFileService fileService) : ControllerBase
 {
     /// <summary>
     /// Retrieves a file by its identifier.
@@ -23,23 +25,13 @@ public class FilesController(FileExtensionContentTypeProvider fileExtensionConte
     [ApiVersion(0.1, Deprecated = true)] // Lower number is given because API is deprecated
     public async Task<ActionResult> GetFile(string fileId, CancellationToken cancellationToken = default)
     {
-        // look up the actual file, depending on the fileId
-        // demo code
-        var pathToFile = "SampleTextFile.txt";
-
-        // check whether the file exists
-        if (!System.IO.File.Exists(pathToFile))
+        var file = await fileService.GetFileAsync(fileId, cancellationToken);
+        if (file is null)
         {
             return NotFound();
         }
 
-        if (!fileExtensionContentTypeProvider.TryGetContentType(pathToFile, out var contentType))
-        {
-            contentType = "application/octet-stream";
-        }
-
-        var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile, cancellationToken);
-        return File(bytes, contentType, Path.GetFileName(pathToFile));
+        return File(file.Content, file.ContentType, file.FileName);
     }
 
     /// <summary>
@@ -51,21 +43,11 @@ public class FilesController(FileExtensionContentTypeProvider fileExtensionConte
     [HttpPost]
     public async Task<ActionResult> CreateFile(IFormFile file, CancellationToken cancellationToken = default) // `IFormFile` represents file sent with http req.
     {
-        // Validate the input.
-        if (file.Length is 0
-            || file.Length > 20971520
-            || file.ContentType != "text/plain")
+        if (!await fileService.SaveFileAsync(file, cancellationToken))
         {
             return BadRequest("No file or an invalid one has been inputted.");
         }
 
-        // Create the file path.
-        var path = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            $"uploaded_file_{Guid.NewGuid()}.txt");
-
-        await using var stream = new FileStream(path, FileMode.Create);
-        await file.CopyToAsync(stream, cancellationToken);
         return Ok("Your file has been uploaded successfully");
     }
 }

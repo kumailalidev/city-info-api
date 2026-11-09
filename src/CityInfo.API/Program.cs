@@ -66,6 +66,7 @@ builder.Services.AddDbContext<CityInfoContext>(dbContextOptions =>
         ?? throw new InvalidOperationException()));
 
 builder.Services.AddScoped<ICityInfoRepository, CityInfoRepository>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddAutoMapper(config => { },
     AppDomain.CurrentDomain.GetAssemblies()); // Use assemblies for auto. scan profiles
