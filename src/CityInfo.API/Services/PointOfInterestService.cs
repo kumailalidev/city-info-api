@@ -12,6 +12,54 @@ public class PointOfInterestService(ICityInfoRepository repository,
     IMapper mapper,
     IMailService mailService) : IPointOfInterestService
 {
+    /// <inheritdoc />
+    public async Task<IEnumerable<PointOfInterestDto>?> GetPointsOfInterestForCityAsync(
+        int cityId,
+        CancellationToken cancellationToken)
+    {
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
+        {
+            return null;
+        }
+
+        var pointsOfInterest = await repository.GetPointsOfInterestForCityAsync(cityId, cancellationToken);
+        return mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterest);
+    }
+
+    /// <inheritdoc />
+    public async Task<PointOfInterestDto?> GetPointOfInterestForCityAsync(
+        int cityId,
+        int pointOfInterestId,
+        CancellationToken cancellationToken)
+    {
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
+        {
+            return null;
+        }
+
+        var pointOfInterest = await repository.GetPointOfInterestForCityAsync(
+            cityId, pointOfInterestId, cancellationToken);
+        return pointOfInterest is null ? null : mapper.Map<PointOfInterestDto>(pointOfInterest);
+    }
+
+    /// <inheritdoc />
+    public async Task<PointOfInterestForUpdateDto?> GetPointOfInterestForUpdateAsync(
+        int cityId,
+        int pointOfInterestId,
+        CancellationToken cancellationToken)
+    {
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
+        {
+            return null;
+        }
+
+        var pointOfInterest = await repository.GetPointOfInterestForCityAsync(
+            cityId, pointOfInterestId, cancellationToken);
+        return pointOfInterest is null
+            ? null
+            : mapper.Map<PointOfInterestForUpdateDto>(pointOfInterest);
+    }
+
     /// <summary>
     /// Creates a new point of interest for the specified city.
     /// </summary>
@@ -42,14 +90,78 @@ public class PointOfInterestService(ICityInfoRepository repository,
         await repository.AddPointOfInterestForCityAsync(cityId, pointOfInterestEntity, cancellationToken);
         await repository.SaveChangesAsync(cancellationToken);
 
-        await SendCreationNotificationAsync(cityId, pointOfInterestEntity);
+        SendCreationNotification(cityId, pointOfInterestEntity);
 
         var resultDto = mapper.Map<PointOfInterestDto>(pointOfInterestEntity);
         return PointOfInterestForCreationResult.Successful(resultDto);
     }
 
-    // Helper for sending notifications
-    private async Task SendCreationNotificationAsync(int cityId, PointOfInterest pointOfInterest)
+    /// <inheritdoc />
+    public async Task<bool> DeletePointOfInterestAsync(
+        int cityId,
+        int pointOfInterestId,
+        CancellationToken cancellationToken)
+    {
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
+        {
+            return false;
+        }
+
+        var pointOfInterest = await repository.GetPointOfInterestForCityAsync(
+            cityId, pointOfInterestId, cancellationToken);
+        if (pointOfInterest is null)
+        {
+            return false;
+        }
+
+        repository.DeletePointOfInterest(pointOfInterest);
+        await repository.SaveChangesAsync(cancellationToken);
+
+        mailService.Send("Point of interest deleted.",
+            $"Point of interest {pointOfInterest.Name} with id {pointOfInterest.Id} was deleted");
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> UpdatePointOfInterestAsync(
+        int cityId,
+        int pointOfInterestId,
+        PointOfInterestForUpdateDto pointOfInterest,
+        CancellationToken cancellationToken)
+    {
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
+        {
+            return false;
+        }
+
+        var pointOfInterestEntity = await repository.GetPointOfInterestForCityAsync(
+            cityId, pointOfInterestId, cancellationToken);
+        if (pointOfInterestEntity is null)
+        {
+            return false;
+        }
+
+        mapper.Map(pointOfInterest, pointOfInterestEntity);
+        await repository.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<int?> BulkUpdatePointsOfInterestDescriptionAsync(
+        int cityId,
+        string newDescription,
+        CancellationToken cancellationToken)
+    {
+        if (!await repository.CityExistsAsync(cityId, cancellationToken))
+        {
+            return null;
+        }
+
+        return await repository.UpdatePointsPointOfInterestDescriptionForCityAsync(
+            cityId, newDescription, cancellationToken);
+    }
+
+    private void SendCreationNotification(int cityId, PointOfInterest pointOfInterest)
     {
         var subject = "New Point of Interest Added";
         var message = $"A new point of interest '{pointOfInterest.Name} has been added to city {cityId}'";
